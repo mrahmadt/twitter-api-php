@@ -132,7 +132,7 @@ class TwitterAPIExchange
     /**
      * Set getfield string, example: '?screen_name=J7mbo'
      * 
-     * @param string $string Get key and value pairs as string
+     * @param string or array $string Get key and value pairs as string
      *
      * @throws \Exception
      * 
@@ -145,19 +145,26 @@ class TwitterAPIExchange
             throw new Exception('You can only choose get OR post fields.'); 
         }
         
-        $getfields = preg_replace('/^\?/', '', explode('&', $string));
-        $params = array();
-
-        foreach ($getfields as $field)
+       if(is_array($string))
         {
-            if ($field !== '')
-            {
-                list($key, $value) = explode('=', $field);
-                $params[$key] = $value;
-            }
+            $params = $string;
         }
+        else
+        {
+            $getfields = preg_replace('/^\?/', '', explode('&', $string));
+            $params = array();
 
-        $this->getfield = '?' . http_build_query($params);
+            foreach ($getfields as $field)
+            {
+                if ($field !== '')
+                {
+                    list($key, $value) = explode('=', $field);
+                    $params[$key] = $value;
+                }
+            }
+
+            $this->getfield = '?' . http_build_query($params);
+        }
         
         return $this;
     }
